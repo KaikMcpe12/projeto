@@ -2,27 +2,25 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { UserRepository } from "../repository/user-repository";
 
 export async function createUser(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().post("/user",
         {
             schema: {
                 body: z.object({
-                    nome: z.string(),
+                    name: z.string(),
                     email: z.string()
                 })
             }
         },
         async (request) => {
-            const { nome, email } = request.body
+            const { name, email } = request.body
 
-            const user = await prisma.user.create({
-                data: {
-                    name: nome,
-                    email: email
-                }
-            })
+            const userRepository = new UserRepository(prisma)
 
-            return { userId: user.id }
+            const user = await userRepository.createUser({ name, email })
+
+            return { userEmail: user?.email }
         })
 }
