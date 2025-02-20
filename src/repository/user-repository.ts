@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client/extension";
-import { IUser } from "../interfaces/IUser";
+import { ICreateUser, IUser, IUserRepository } from "../interfaces/IUser";
 
-export class UserRepository {
+export class UserRepository implements IUserRepository{
     constructor(private prisma: PrismaClient){}
 
-    public async findById(id: number): Promise<IUser | null> {
+    public async findById(id: string): Promise<IUser | null> {
         return await this.prisma.user.findUnique({
             where: {
                 id
@@ -13,14 +13,14 @@ export class UserRepository {
     }
 
     public async findByEmail(email: string): Promise<IUser | null> {
-        return await this.prisma.user.findUnique({
+        return await this.prisma.user.findMany({
             where: {
                 email
             }
         })
     }
 
-    public async createUser(requestUser: IUser): Promise<IUser | null>{
+    public async createUser(requestUser: ICreateUser): Promise<IUser>{
         const user = await this.prisma.user.create({
             data: {
                 name: requestUser.name,
