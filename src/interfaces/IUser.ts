@@ -9,6 +9,8 @@ export interface IUser {
 export interface ICreateUser{
     name: string;
     email: string;
+    password: string;
+    dateBirth: Date | null;
 }
 
 export interface IUserRepository {
